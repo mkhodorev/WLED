@@ -7,10 +7,13 @@
 //#define USE_APA102 // Uncomment for using APA102 LEDs.
 #define BTNPIN 0     //button pin. Needs to have pullup (gpio0 recommended)
 #define IR_PIN 4     //infrared pin (-1 to disable)
-#define RLYPIN 12    //pin for relay, will be set HIGH if LEDs are on (-1 to disable). Also usable for standby leds, triggers,...
+#define RLYPIN 13    //pin for relay, will be set HIGH if LEDs are on (-1 to disable). Also usable for standby leds, triggers,...
 #define AUXPIN -1    //debug auxiliary output pin (-1 to disable)
 
-#define RLYMDE 1     //mode for relay, 0: LOW if LEDs are on 1: HIGH if LEDs are on
+#define RLYMDE 0     //mode for relay, 0: LOW if LEDs are on 1: HIGH if LEDs are on
+
+#define SWITCH_PIN 14  //pin for switch, will be set HIGH if switch is on (-1 to disable)
+#define SWITCH_MDE 0   //mode for switch, 0: LOW if switch is on 1: HIGH if switch is on
 
 #ifdef USE_APA102
  #define CLKPIN 0

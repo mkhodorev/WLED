@@ -1,5 +1,24 @@
 //Infrared codes
 
+//Infrared codes for 17-key
+#define IR17_FAV1      0xFFA25D  //key 1
+#define IR17_FAV2      0xFF629D  //key 2
+#define IR17_FAV3      0xFFE21D  //key 3
+#define IR17_FAV4      0xFF22DD  //key 4
+#define IR17_FAV5      0xFF02FD  //key 5
+#define IR17_FAV6      0xFFC23D  //key 6
+#define IR17_PAL_NEXT  0xFFE01F  //key 7
+#define IR17_QUICK     0xFFA857  //key 8
+#define IR17_PAL_PREV  0xFF906F  //key 9
+#define IR17_SLOW      0xFF9867  //key 0
+#define IR17_SW_ONOFF  0xFF6897  //key *
+#define IR17_ONOFF     0xFFB04F  //key #
+#define IR17_BRIGHTER  0xFF18E7  //key up
+#define IR17_DARKER    0xFF4AB5  //key down
+#define IR17_FX_PREV   0xFF10EF  //key left
+#define IR17_FX_NEXT   0xFF5AA5  //key right
+#define IR17_RNDCOLLOR 0xFF38C7  //key ok
+
 //Add your custom codes here
 #define IRCUSTOM_ONOFF  0xA55AEA15 //Pioneer RC-975R "+FAV" button (example)
 #define IRCUSTOM_MACRO1 0xFFFFFFFF //placeholder, will never be checked for

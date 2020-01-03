@@ -31,6 +31,9 @@ void onMqttConnect(bool sessionPresent)
     strcpy(subuf, mqttDeviceTopic);
     strcat(subuf, "/api");
     mqtt->subscribe(subuf, 0);
+    strcpy(subuf, mqttDeviceTopic);
+    strcat(subuf, "/switch");
+    mqtt->subscribe(subuf, 0);
   }
 
   if (mqttGroupTopic[0] != 0)
@@ -45,6 +48,7 @@ void onMqttConnect(bool sessionPresent)
   }
 
   doPublishMqtt = true;
+  publishMqttSwitchStatus();
   DEBUG_PRINTLN("MQTT ready");
 }
 
@@ -66,6 +70,8 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     String apireq = "win&";
     apireq += (char*)payload;
     handleSet(nullptr, apireq);
+  } else if (strstr(topic, "/switch")) {
+    processCustomSwitch((char*)payload);
   } else parseMQTTBriPayload(payload);
 }
 

@@ -15,24 +15,6 @@ unsigned long irCheckedTime = 0;
 uint32_t lastValidCode = 0;
 uint16_t irTimesRepeated = 0;
 
-
-//Add what your custom IR codes should trigger here. Guide: https://github.com/Aircoookie/WLED/wiki/Infrared-Control
-//IR codes themselves can be defined directly after "case" or in "ir_codes.h"
-bool decodeIRCustom(uint32_t code)
-{
-  switch (code)
-  {
-    //just examples, feel free to modify or remove
-    case IRCUSTOM_ONOFF : toggleOnOff(); break;
-    case IRCUSTOM_MACRO1 : applyMacro(1); break;
-
-    default: return false;
-  }
-  if (code != IRCUSTOM_MACRO1) colorUpdated(2); //don't update color again if we apply macro, it already does it
-  return true;
-}
-
-
 //relatively change brightness, minumum A=5
 void relativeChange(byte* property, int8_t amount, byte lowerBoundary =0)
 {
@@ -48,31 +30,72 @@ void decodeIR(uint32_t code)
   if (code == 0xFFFFFFFF) //repeated code, continue brightness up/down
   {
     irTimesRepeated++;
-    if (lastValidCode == IR24_BRIGHTER)
+    if (lastValidCode == IR24_BRIGHTER || lastValidCode == IR17_BRIGHTER)
     { 
       relativeChange(&bri, 10); colorUpdated(2);
     }
-    else if (lastValidCode == IR24_DARKER)
+    else if (lastValidCode == IR24_DARKER || lastValidCode == IR17_DARKER)
     {
       relativeChange(&bri, -10, 5); colorUpdated(2);
     }
-    else if (lastValidCode == IR24_ON && irTimesRepeated > 7)
+    else if (lastValidCode == IR17_QUICK)
+    {
+      relativeChange(&effectSpeed, 10); colorUpdated(2);
+    }
+    else if (lastValidCode == IR17_SLOW)
+    {
+      relativeChange(&effectSpeed, -10, 5); colorUpdated(2);
+    }
+    else if ((lastValidCode == IR24_ON || lastValidCode == IR17_ONOFF) && irTimesRepeated > 7)
     {
       nightlightActive = true;
       nightlightStartTime = millis();
       colorUpdated(2);
     }
+    else if (lastValidCode == IR17_FAV1 && irTimesRepeated > 7)   savePreset(1);
+    else if (lastValidCode == IR17_FAV2 && irTimesRepeated > 7)   savePreset(2);
+    else if (lastValidCode == IR17_FAV3 && irTimesRepeated > 7)   savePreset(3);
+    else if (lastValidCode == IR17_FAV4 && irTimesRepeated > 7)   savePreset(4);
+    else if (lastValidCode == IR17_FAV5 && irTimesRepeated > 7)   savePreset(5);
+    else if (lastValidCode == IR17_FAV6 && irTimesRepeated > 7)   savePreset(6);
+      
+   
     return;
   }
   lastValidCode = 0; irTimesRepeated = 0;
 
-  if (decodeIRCustom(code)) return;
   if      (code > 0xFFFFFF) return; //invalid code
-  else if (code > 0xFF0000) decodeIR44(code); //is in 44-key remote range
+  else if (code > 0xFF0000) decodeIR17(code); //is in 17-key remote range
   else if (code > 0xF70000 && code < 0xF80000) decodeIR24(code); //is in 24-key remote range
   //code <= 0xF70000 also invalid
 }
 
+void decodeIR17(uint32_t code)
+{
+  switch (code) {
+
+    case IR17_SW_ONOFF  : toggleSwitch();                   break;
+    case IR17_ONOFF     : toggleOnOff(); colorUpdated(1);   break;
+    case IR17_BRIGHTER  : relativeChange(&bri, 10);         break;
+    case IR17_DARKER    : relativeChange(&bri, -10, 5);     break;
+    case IR17_RNDCOLLOR : _setRandomColor(false);           break;
+    case IR17_FAV1      : if (!applyPreset(1)) colorFromUint32(COLOR_RED);        break;
+    case IR17_FAV2      : if (!applyPreset(2)) colorFromUint32(COLOR_GREEN);      break;
+    case IR17_FAV3      : if (!applyPreset(3)) colorFromUint32(COLOR_BLUE);       break;
+    case IR17_FAV4      : if (!applyPreset(4)) colorFromUint32(COLOR_MAGENTA);    break;
+    case IR17_FAV5      : if (!applyPreset(5)) colorFromUint32(COLOR_WHITE);      break;
+    case IR17_FAV6      : if (!applyPreset(6)) colorFromUint32(COLOR_YELLOWISH);  break;
+    case IR17_QUICK     : relativeChange(&effectSpeed, 10);                       break;
+    case IR17_SLOW      : relativeChange(&effectSpeed, -10, 5);                   break;
+    case IR17_FX_PREV   : effectCurrent -= 1; if (effectCurrent < 0) effectCurrent = MODE_COUNT-1;  break;
+    case IR17_FX_NEXT   : effectCurrent += 1; if (effectCurrent >= MODE_COUNT) effectCurrent = 0;   break;
+    case IR17_PAL_NEXT  : effectPalette += 1; if (effectPalette >= strip.getPaletteCount()) effectPalette = 0;   break;
+    case IR17_PAL_PREV  : effectPalette -= 1; if (effectPalette < 0) effectPalette = strip.getPaletteCount()-1;  break;
+    default: return;
+  }
+  lastValidCode = code;
+  colorUpdated(2); //for notifier, IR is considered a button input
+}
 
 void decodeIR24(uint32_t code)
 {

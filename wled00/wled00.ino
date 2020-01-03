@@ -114,6 +114,9 @@ byte auxDefaultState   = 0;                   //0: input 1: high 2: low
 byte auxTriggeredState = 0;                   //0: input 1: high 2: low
 char ntpServerName[33] = "0.wled.pool.ntp.org";//NTP server to use
 
+//USERMOD
+bool switchStatus = 0;
+
 
 //WiFi CONFIG (all these can be changed via web UI, no need to set them here)
 char clientSSID[33] = "Your_Network";

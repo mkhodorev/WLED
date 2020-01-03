@@ -9,6 +9,27 @@
 
 A fast and feature-rich implementation of an ESP8266/ESP32 webserver to control NeoPixel (WS2812B, WS2811, SK6812, APA102) LEDs!
 
+### My Updates: 
+- Added switch on GPIO Pin 14
+  - mqtt command topic `/switch`. Toggle - `T`, on - `ON`, off - `OFF`
+  - mqtt status topic `/switch/status`. On - `ON`, off - `OFF`
+- Added IR remote control 17-key
+  - keys 1-6 switch FAV 1-6
+  - long press on keys 1-6 saves current effect settings for FAV
+  - keys 7 and 9 to switch the palette
+  - keys 8 and 0 to set the speed of the effect
+  - UP and DOWN keys to set the brightness
+  - LEFT and RIGHT keys to switch the effect
+  - key * toggle GPIO switch
+  - key # toggle led
+  - long press on # sets the timer
+
+### My Config:
+- LEDPIN 2 
+- RLYPIN 13     //pin for relay, will be set LOW if LEDs are on
+- SWITCH_PIN 14 //pin for switch, will be set LOW if LEDs are on
+- IR_PIN 4
+
 ### Features:
 - WS2812FX library integrated for almost 90 special effects  
 - FastLED noise effects and palettes  
