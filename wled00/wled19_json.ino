@@ -88,8 +88,8 @@ bool deserializeState(JsonObject root)
   int ps = root["ps"] | -1;
   if (ps >= 0) applyPreset(ps);
   
-  int cy = root["pl"] | -1;
-  presetCyclingEnabled = (cy >= 0);
+  int cy = root["pl"] | -2;
+  if (cy > -2) presetCyclingEnabled = (cy >= 0);
   JsonObject ccnf = root["ccnf"];
   presetCycleMin = ccnf["min"] | presetCycleMin;
   presetCycleMax = ccnf["max"] | presetCycleMax;
@@ -243,7 +243,7 @@ void serializeInfo(JsonObject root)
   leds_pin.add(LEDPIN);
   
   leds["pwr"] = strip.currentMilliamps;
-  leds["maxpwr"] = strip.ablMilliampsMax;
+  leds["maxpwr"] = (strip.currentMilliamps)? strip.ablMilliampsMax : 0;
   leds["maxseg"] = strip.getMaxSegments();
   leds["seglock"] = false; //will be used in the future to prevent modifications to segment config
 

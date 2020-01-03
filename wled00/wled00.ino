@@ -3,7 +3,7 @@
  */
 /*
  * @title WLED project sketch
- * @version 0.9.0-b1
+ * @version 0.9.0-b2
  * @author Christian Schwinne
  */
 
@@ -31,7 +31,6 @@
 
 //to toggle usb serial debug (un)comment the following line
 //#define WLED_DEBUG
-
 
 //library inclusions
 #include <Arduino.h>
@@ -85,6 +84,7 @@
 #endif
 
 #ifdef ARDUINO_ARCH_ESP32
+  #undef WLED_USE_ANALOG_LEDS  // Solid RGBW not implemented for ESP32 yet
  /*#ifndef WLED_DISABLE_INFRARED
   #include <IRremote.h>
  #endif*/ //there are issues with ESP32 infrared, so it is disabled for now
@@ -98,8 +98,8 @@
 
 
 //version code in format yymmddb (b = daily build)
-#define VERSION 1912121
-char versionString[] = "0.9.0-b1";
+#define VERSION 2001022
+char versionString[] = "0.9.0-b2";
 
 
 //AP and OTA default passwords (for maximum change them!)
@@ -427,6 +427,7 @@ AsyncMqttClient* mqtt = NULL;
 void colorFromUint32(uint32_t,bool=false);
 void serveMessage(AsyncWebServerRequest*,uint16_t,String,String,byte);
 void handleE131Packet(e131_packet_t*, IPAddress);
+void handleOverlayDraw();
 
 #define E131_MAX_UNIVERSE_COUNT 9
 
